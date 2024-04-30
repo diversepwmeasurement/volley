@@ -1,42 +1,34 @@
-name: "CodeQL"
-
-on:
-  push:
-    branches: [ 'master' ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ 'master' ]
-  schedule:
-    - cron: '4 0 * * 6'
-
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'java' ]
-
+    runs-on: self-hosted
     steps:
-    - name: Checkout repository
+    - continue-on-error: true
+      name: Checkout repository
       uses: actions/checkout@v3
-
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
+    - continue-on-error: true
+      name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
-
-    - name: Autobuild
+    - continue-on-error: true
+      name: Autobuild
       uses: github/codeql-action/autobuild@v2
-
-    - name: Perform CodeQL Analysis
+    - continue-on-error: true
+      name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
-        category: "/language:${{matrix.language}}"
+        category: /language:${{matrix.language}}
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+        - java
+name: CodeQL
+on:
+  repository_dispatch:
+    types: trigger-ga___codeql.yml
